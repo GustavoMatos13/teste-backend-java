@@ -18,7 +18,7 @@ Projeto Spring Boot para cadastro de CNPJs e sócios, com validação de documen
 ## 🚀 Como Executar o Projeto
 
 1. Clone o repositório:
-git clone <URL_DO_REPOSITORIO>
+git clone https://github.com/GustavoMatos13/teste-backend-java.git
 cd cadastro-cnpj
 
 2. Build e execução usando Maven:
