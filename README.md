@@ -18,7 +18,6 @@ Projeto Spring Boot para cadastro de CNPJs e sócios, com validação de documen
 ## 🚀 Como Executar o Projeto
 
 1. Clone o repositório:
-```bash
 git clone <URL_DO_REPOSITORIO>
 cd cadastro-cnpj
 
@@ -26,9 +25,8 @@ cd cadastro-cnpj
 ./mvnw clean install
 ./mvnw spring-boot:run
 
-## 🌐  Endpoints da API
+## 🌐 Endpoints da API
 
-```markdown
 
 A documentação interativa está disponível via Swagger UI:
 http://localhost:8080/swagger-ui.html
@@ -39,7 +37,7 @@ http://localhost:8080/swagger-ui.html
 | GET    | /omni/buscar/{id}    | Busca CNPJ por ID       |
 | PUT    | /omni/atualizar/{id} | Atualiza CNPJ existente |
 | DELETE | /omni/deletar/{id}   | Deleta CNPJ             |
-```
+
 
 ## ✅ Decisões de Arquitetura e Justificativas
 
@@ -56,7 +54,6 @@ http://localhost:8080/swagger-ui.html
 ## 🧪 Como Rodar os Testes
 
 - **Testes unitários (Service e Repository):
-```bash
 ./mvnw test
 - **Testes de integração (MockMvc + H2):
 ./mvnw verify
