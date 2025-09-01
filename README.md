@@ -40,7 +40,7 @@ http://localhost:8080/swagger-ui.html
 
 observação: o campo TIPO da entidade socio só aceita PJ ou PF como valores
 
-## ✅ Decisões de Arquitetura e Justificativas
+## ✅ Decisões e Justificativas
 
 - **Arquitetura em MVC**: foi desenvolvido em cima de uma arquitetura simples, eficiente e escalonavel.  
 - **DTOs separados das entidades**: evita exposição de campos sensíveis e permite validação de entrada.  
