@@ -31,12 +31,13 @@ cd cadastro-cnpj
 A documentação interativa está disponível via Swagger UI:
 http://localhost:8080/swagger-ui.html
 
-| Método | Endpoint             | Descrição               |
-| ------ | -------------------- | ----------------------- |
-| POST   | /omni/criar\_cnpj    | Cria um CNPJ com sócios |
-| GET    | /omni/buscar/{id}    | Busca CNPJ por ID       |
-| PUT    | /omni/atualizar/{id} | Atualiza CNPJ existente |
-| DELETE | /omni/deletar/{id}   | Deleta CNPJ             |
+| Método | Endpoint             | Descrição               | Corpo da Requisição (JSON)                                                                                                                                                                                                                                                                          |
+| ------ | -------------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| POST   | /omni/criar\_cnpj    | Cria um CNPJ com sócios | `json { "cnpj": "45723174000110", "razaoSocial": "Empresa LTDA", "nomeFantasia": "Fantasia", "socios": [ {"tipo":"PF","documento":"12345678909","nome":"João","porcentagemParticipacao":50.0}, {"tipo":"PJ","documento":"45723174000110","nome":"Empresa ABC","porcentagemParticipacao":50.0} ] } ` |
+| GET    | /omni/buscar/{id}    | Busca CNPJ por ID       | —                                                                                                                                                                                                                                                                                                   |
+| PUT    | /omni/atualizar/{id} | Atualiza CNPJ existente | `json { "cnpj": "45723174000110", "razaoSocial": "Empresa Atualizada", "nomeFantasia": "Fantasia Atualizada", "socios": [ {"tipo":"PF","documento":"12345678909","nome":"João","porcentagemParticipacao":50.0} ] } `                                                                                |
+| DELETE | /omni/deletar/{id}   | Deleta CNPJ             | —                                                                                                                                                                                                                                                                                                   |
+
 
 
 ## ✅ Decisões de Arquitetura e Justificativas
