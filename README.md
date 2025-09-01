@@ -26,7 +26,7 @@ cd cadastro-cnpj
 ./mvnw clean install
 ./mvnw spring-boot:run
 
-## 🌐 ** Endpoints da API**
+## 🌐  Endpoints da API
 
 ```markdown
 
@@ -41,7 +41,7 @@ http://localhost:8080/swagger-ui.html
 | DELETE | /omni/deletar/{id}   | Deleta CNPJ             |
 ```
 
-##✅ Decisões de Arquitetura e Justificativas
+## ✅ Decisões de Arquitetura e Justificativas
 
 - **Arquitetura em MVC**: foi desenvolvido em cima de uma arquitetura simples, eficiente e escalonavel.  
 - **DTOs separados das entidades**: evita exposição de campos sensíveis e permite validação de entrada.  
