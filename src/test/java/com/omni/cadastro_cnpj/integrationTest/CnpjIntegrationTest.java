@@ -50,7 +50,7 @@ public class CnpjIntegrationTest {
     // 2️⃣ POST - criar CNPJ inválido
     @Test
     void deveFalharCriarCnpjInvalido() throws Exception {
-        String json = gerarJsonCnpj("11111111111111","Empresa LTDA","Fantasia", false);
+        String json = gerarJsonCnpj("11111111111111","Empresa LTDA","Fantasia", true);
 
         mockMvc.perform(post("/omni/criar_cnpj")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -81,7 +81,7 @@ public class CnpjIntegrationTest {
     // 4️⃣ GET por ID existente
     @Test
     void deveBuscarCnpjPorIdExistente() throws Exception {
-        String json = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", false);
+        String json = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", true);
         String response = mockMvc.perform(post("/omni/criar_cnpj")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
@@ -115,7 +115,7 @@ public class CnpjIntegrationTest {
     // 7️⃣ PUT - atualizar existente
     @Test
     void deveAtualizarCnpjExistente() throws Exception {
-        String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", false);
+        String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", true);
         String response = mockMvc.perform(post("/omni/criar_cnpj")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonCriar))
@@ -123,7 +123,7 @@ public class CnpjIntegrationTest {
                 .andReturn().getResponse().getContentAsString();
         Long id = Long.valueOf(response.replaceAll("\\D+", "").trim());
 
-        String jsonAtualizar = gerarJsonCnpj("45723174000110","Empresa Atualizada","Fantasia Atualizada", false);
+        String jsonAtualizar = gerarJsonCnpj("45723174000110","Empresa Atualizada","Fantasia Atualizada", true);
 
         mockMvc.perform(put("/omni/atualizar/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -136,7 +136,7 @@ public class CnpjIntegrationTest {
     // 8️⃣ DELETE - remover existente
     @Test
     void deveDeletarCnpjExistente() throws Exception {
-        String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", false);
+        String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", true);
         String response = mockMvc.perform(post("/omni/criar_cnpj")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonCriar))
