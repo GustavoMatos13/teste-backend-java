@@ -38,7 +38,7 @@ http://localhost:8080/swagger-ui.html
 | PUT    | /omni/atualizar/{id} | Atualiza CNPJ existente | `json { "cnpj": "45723174000110", "razaoSocial": "Empresa Atualizada", "nomeFantasia": "Fantasia Atualizada", "socios": [ {"tipo":"PF","documento":"12345678909","nome":"João","porcentagemParticipacao":50.0} ] } `                                                                                |
 | DELETE | /omni/deletar/{id}   | Deleta CNPJ             | —                                                                                                                                                                                                                                                                                                   |
 
-
+observação: o campo TIPO da entidade socio só aceita PJ ou PF como valores
 
 ## ✅ Decisões de Arquitetura e Justificativas
 
