@@ -97,8 +97,10 @@ public class CnpjService implements ICnpjService {
     public void deletar(Long id) {
         Cnpj cnpjExistente = cnpjRepository.findById(id)
                 .orElseThrow(() -> new CnpjNotFoundException(id));
-        for(Socio socio : cnpjExistente.getSocios()) {
-        	socioRepository.delete(socio);
+        if (cnpjExistente.getSocios() != null) {
+	        for(Socio socio : cnpjExistente.getSocios()) {
+	        	socioRepository.delete(socio);
+	        }
         }
         cnpjRepository.delete(cnpjExistente);
     }
