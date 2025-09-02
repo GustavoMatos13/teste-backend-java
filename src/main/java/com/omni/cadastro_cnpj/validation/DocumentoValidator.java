@@ -22,20 +22,15 @@ public class DocumentoValidator implements ConstraintValidator<DocumentoValido, 
 
         switch (tipo) {
             case CPF:
-                System.out.print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ 0 ");
                 return isValidCPF(documento);
             case CNPJ:
-            	System.out.print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ 00 ");
                 return isValidCNPJ(documento);
             case AMBOS:
                 if (documento.length() == 11) {
-                	System.out.print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ 000 ");
                     return isValidCPF(documento);
                 } else if (documento.length() == 14) {
-                	System.out.print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ 000 ");
                     return isValidCNPJ(documento);
                 }
-                System.out.print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ 0000 ");
                 return false;
             default:
                 return false;
@@ -55,9 +50,6 @@ public class DocumentoValidator implements ConstraintValidator<DocumentoValido, 
             for (int i = 0; i < 10; i++) soma += (cpf.charAt(i) - '0') * (11 - i);
             int dig2 = 11 - (soma % 11);
             if (dig2 >= 10) dig2 = 0;
-            
-
-            System.out.print("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ 2 " + cpf);
 
             return dig1 == (cpf.charAt(9) - '0') && dig2 == (cpf.charAt(10) - '0');
         } catch (Exception e) {
