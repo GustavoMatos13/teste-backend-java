@@ -12,17 +12,20 @@ import com.omni.cadastro_cnpj.exception.CnpjAlreadyExistsException;
 import com.omni.cadastro_cnpj.exception.CnpjNotFoundException;
 import com.omni.cadastro_cnpj.mapper.CnpjSocioMapper;
 import com.omni.cadastro_cnpj.repository.CnpjRepository;
+import com.omni.cadastro_cnpj.repository.SocioRepository;
 import com.omni.cadastro_cnpj.service.interfaces.ICnpjService;
 
 @Service
 public class CnpjService implements ICnpjService {
 
     private final CnpjRepository cnpjRepository;
+    private final SocioRepository socioRepository;
     private CnpjSocioMapper cnpjSocioMapper;
 
-    public CnpjService(CnpjRepository cnpjRepository, CnpjSocioMapper cnpjSocioMapper) {
+    public CnpjService(SocioRepository socioRepository, CnpjRepository cnpjRepository, CnpjSocioMapper cnpjSocioMapper) {
         this.cnpjRepository = cnpjRepository;
         this.cnpjSocioMapper = cnpjSocioMapper;
+        this.socioRepository = socioRepository;
     }
 
     // Salvar CNPJ a partir do DTO
@@ -32,7 +35,9 @@ public class CnpjService implements ICnpjService {
         if (cnpjRepository.existsByCnpj(cnpjDTO.getCnpj())) {
             throw new CnpjAlreadyExistsException(cnpjDTO.getCnpj());
         }
-
+        
+        cnpjDTO = this.limparDocumentos(cnpjDTO);
+        
         // Converte DTO para entidade
         Cnpj cnpj = cnpjSocioMapper.converterDTOParaEntidade(cnpjDTO);
         
@@ -66,6 +71,8 @@ public class CnpjService implements ICnpjService {
     public CnpjDTO atualizar(Long id, CnpjDTO cnpjDTO) {
         Cnpj cnpjExistente = cnpjRepository.findById(id)
                 .orElseThrow(() -> new CnpjNotFoundException(id));
+        
+        cnpjDTO = this.limparDocumentos(cnpjDTO);
 
         // Atualiza campos
         cnpjExistente.setCnpj(cnpjDTO.getCnpj());
@@ -90,6 +97,9 @@ public class CnpjService implements ICnpjService {
     public void deletar(Long id) {
         Cnpj cnpjExistente = cnpjRepository.findById(id)
                 .orElseThrow(() -> new CnpjNotFoundException(id));
+        for(Socio socio : cnpjExistente.getSocios()) {
+        	socioRepository.delete(socio);
+        }
         cnpjRepository.delete(cnpjExistente);
     }
     
@@ -98,10 +108,30 @@ public class CnpjService implements ICnpjService {
         if (cnpj.getSocios() != null) {
             for (Socio socio : cnpj.getSocios()) {
                 // Se o sócio é pessoa física, ou juridica
-                if(cnpjRepository.findByCnpj(socio.getDocumento()) != null) socio.setCnpjSocio(cnpj);
-                else socio.setCnpjSocio(null);
+                if(!cnpjRepository.findByCnpj(socio.getDocumento()).isEmpty()) socio.setCnpjSocio(cnpj);
+                else socio.setCnpj(cnpj);
             }
         }
+    }
+    
+    private CnpjDTO limparDocumentos(CnpjDTO cnpjDTO) {
+        if (cnpjDTO == null) return null;
+
+        // Remove caracteres não numéricos do CNPJ
+        if (cnpjDTO.getCnpj() != null) {
+            cnpjDTO.setCnpj(cnpjDTO.getCnpj().replaceAll("\\D", ""));
+        }
+
+        // Remove caracteres não numéricos de todos os documentos dos sócios
+        if (cnpjDTO.getSocios() != null) {
+            cnpjDTO.getSocios().forEach(socio -> {
+                if (socio.getDocumento() != null) {
+                    socio.setDocumento(socio.getDocumento().replaceAll("\\D", ""));
+                }
+            });
+        }
+        
+        return cnpjDTO;
     }
 
 }

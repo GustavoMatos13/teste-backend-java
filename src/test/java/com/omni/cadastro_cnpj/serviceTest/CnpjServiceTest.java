@@ -72,6 +72,17 @@ class CnpjServiceTest {
         verify(cnpjRepository, times(1)).save(any(Cnpj.class));
     }
     
+
+ // ===================== BUSCAR =====================
+
+    @Test
+    void deveFalharBuscarCnpjPorIdInexistente() {
+        when(cnpjRepository.findById(999L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> cnpjService.buscarPorId(999L));
+        verify(cnpjRepository, times(1)).findById(999L);
+    }
+    
     @Test
     void deveBuscarCnpjPorIdExistente() {
         Cnpj cnpjEntity = new Cnpj();
@@ -95,14 +106,7 @@ class CnpjServiceTest {
         assertEquals("45723174000110", resultado.getCnpj());
         verify(cnpjRepository, times(1)).findById(1L);
     }
-
-    @Test
-    void deveFalharBuscarCnpjPorIdInexistente() {
-        when(cnpjRepository.findById(999L)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> cnpjService.buscarPorId(999L));
-        verify(cnpjRepository, times(1)).findById(999L);
-    }
+    
 
     // ===================== ATUALIZAR =====================
     @Test

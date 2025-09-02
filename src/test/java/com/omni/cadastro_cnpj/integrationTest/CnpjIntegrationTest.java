@@ -84,8 +84,28 @@ public class CnpjIntegrationTest {
                 .content(json))
                .andExpect(status().isBadRequest());
     }
+    
+    // 4 POST - criar com sócio inválido
+    @Test
+    void deveFalharCriarCnpjComSocioTipoInvalido() throws Exception {
+        String json = """
+            {
+              "cnpj":"45723174000110",
+              "razaoSocial":"Empresa LTDA",
+              "nomeFantasia":"Fantasia",
+              "socios":[
+                {"tipo":"teste","documento":"12345678909","nome":"João","porcentagemParticipacao":50.0}
+              ]
+            }
+            """;
 
-    // 4️ GET por ID existente
+        mockMvc.perform(post("/omni/criar_cnpj")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
+               .andExpect(status().isBadRequest());
+    }
+
+    // 5️ GET por ID existente
     @Test
     void deveBuscarCnpjPorIdExistente() throws Exception {
         String json = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", true);
@@ -104,14 +124,14 @@ public class CnpjIntegrationTest {
                .andExpect(jsonPath("$.cnpj").value("45723174000110"));
     }
 
-    // 5️ GET por ID inexistente
+    // 6 GET por ID inexistente
     @Test
     void deveRetornar404ParaIdInexistente() throws Exception {
         mockMvc.perform(get("/omni/buscar/9999"))
                .andExpect(status().isNotFound());
     }
 
-    // 6️ PUT - atualizar ID inexistente
+    // 7 PUT - atualizar ID inexistente
     @Test
     void deveRetornar404AoAtualizarIdInexistente() throws Exception {
         String jsonAtualizar = gerarJsonCnpj("45723174000110","Empresa Atualizada","Fantasia Atualizada", true);
@@ -121,7 +141,7 @@ public class CnpjIntegrationTest {
                .andExpect(status().isNotFound());
     }
 
-    // 7️ PUT - atualizar existente
+    // 8 PUT - atualizar existente
     @Test
     void deveAtualizarCnpjExistente() throws Exception {
         String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", true);
@@ -144,7 +164,7 @@ public class CnpjIntegrationTest {
                .andExpect(jsonPath("$.nomeFantasia").value("Fantasia Atualizada"));
     }
 
-    // 8️ DELETE - remover existente
+    // 9️ DELETE - remover existente
     @Test
     void deveDeletarCnpjExistente() throws Exception {
         String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", true);
@@ -164,7 +184,7 @@ public class CnpjIntegrationTest {
                .andExpect(status().isNotFound());
     }
 
-    // 9️ DELETE - ID inexistente
+    // 10 DELETE - ID inexistente
     @Test
     void deveRetornar404AoDeletarIdInexistente() throws Exception {
         mockMvc.perform(delete("/omni/deletar/9999"))
