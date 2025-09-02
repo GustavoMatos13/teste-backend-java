@@ -12,13 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.omni.cadastro_cnpj.dto.CnpjDTO;
 import com.omni.cadastro_cnpj.dto.SocioDTO;
 import com.omni.cadastro_cnpj.entity.Cnpj;
+import com.omni.cadastro_cnpj.entity.Socio;
 import com.omni.cadastro_cnpj.enuns.TipoSocio;
 import com.omni.cadastro_cnpj.repository.CnpjRepository;
 import com.omni.cadastro_cnpj.service.CnpjService;
@@ -26,10 +27,10 @@ import com.omni.cadastro_cnpj.service.CnpjService;
 @SpringBootTest
 class CnpjServiceTest {	
 
-    @Mock
+	@MockBean
     private CnpjRepository cnpjRepository;
 
-    @InjectMocks
+    @Autowired
     private CnpjService cnpjService;
 
     @Test
@@ -44,17 +45,23 @@ class CnpjServiceTest {
         cnpjDTO.setRazaoSocial("Empresa Teste");
         cnpjDTO.setNomeFantasia("Fantasia");
         cnpjDTO.setSocios(List.of(socio1, socio2));
-
+        
+        
         // Entidade que o repository retorna
         Cnpj cnpjEntity = new Cnpj();
-        cnpjEntity.setId(1L);
         cnpjEntity.setCnpj("45723174000110");
         cnpjEntity.setRazaoSocial("Empresa Teste");
         cnpjEntity.setNomeFantasia("Fantasia");
-        cnpjEntity.setSocios(List.of()); 
+        
+        Socio socioEntity1 = new Socio();
+        socioEntity1.setDocumento("12345678909");
+        socioEntity1.setTipo(TipoSocio.PF);
+        socioEntity1.setNome("João");
+        socioEntity1.setPorcentagemParticipacao(50.0);
+        cnpjEntity.setSocios(List.of(socioEntity1)); 
 
         when(cnpjRepository.save(any())).thenReturn(cnpjEntity);
-
+        
         // Chamada do service
         CnpjDTO salvo = cnpjService.salvar(cnpjDTO);
 
@@ -68,10 +75,17 @@ class CnpjServiceTest {
     @Test
     void deveBuscarCnpjPorIdExistente() {
         Cnpj cnpjEntity = new Cnpj();
-        cnpjEntity.setId(1L);
         cnpjEntity.setCnpj("45723174000110");
         cnpjEntity.setRazaoSocial("Empresa Teste");
         cnpjEntity.setNomeFantasia("Fantasia");
+        
+        Socio socioEntity1 = new Socio();
+        socioEntity1.setDocumento("12345678909");
+        socioEntity1.setTipo(TipoSocio.PF);
+        socioEntity1.setNome("João");
+        socioEntity1.setPorcentagemParticipacao(50.0);
+        
+        cnpjEntity.setSocios(List.of(socioEntity1));
 
         when(cnpjRepository.findById(1L)).thenReturn(Optional.of(cnpjEntity));
 
@@ -94,12 +108,14 @@ class CnpjServiceTest {
     @Test
     void deveAtualizarCnpjExistente() {
         Cnpj cnpjEntity = new Cnpj();
-        cnpjEntity.setId(1L);
         cnpjEntity.setCnpj("45723174000110");
         cnpjEntity.setRazaoSocial("Empresa Teste");
         cnpjEntity.setNomeFantasia("Fantasia");
+        
 
-        CnpjDTO cnpjDTOAtualizado = new CnpjDTO("45723174000110","Empresa Atualizada","Fantasia Atualizada", List.of());
+        SocioDTO socio1 = new SocioDTO(TipoSocio.PF, "12345678909", "João", 50.0);
+
+        CnpjDTO cnpjDTOAtualizado = new CnpjDTO(null, "45723174000110","Empresa Atualizada","Fantasia Atualizada", List.of(socio1));
 
         when(cnpjRepository.findById(1L)).thenReturn(Optional.of(cnpjEntity));
         when(cnpjRepository.save(any())).thenReturn(cnpjEntity);
@@ -112,7 +128,7 @@ class CnpjServiceTest {
 
     @Test
     void deveFalharAtualizarCnpjInexistente() {
-        CnpjDTO cnpjDTOAtualizado = new CnpjDTO("45723174000110","Empresa Atualizada","Fantasia Atualizada", List.of());
+        CnpjDTO cnpjDTOAtualizado = new CnpjDTO(null, "45723174000110","Empresa Atualizada","Fantasia Atualizada", List.of());
         when(cnpjRepository.findById(999L)).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> cnpjService.atualizar(999L, cnpjDTOAtualizado));
@@ -123,7 +139,6 @@ class CnpjServiceTest {
     @Test
     void deveDeletarCnpjExistente() {
         Cnpj cnpjEntity = new Cnpj();
-        cnpjEntity.setId(1L);
 
         when(cnpjRepository.findById(1L)).thenReturn(Optional.of(cnpjEntity));
 

@@ -18,10 +18,11 @@ import com.omni.cadastro_cnpj.service.interfaces.ICnpjService;
 public class CnpjService implements ICnpjService {
 
     private final CnpjRepository cnpjRepository;
-    private CnpjSocioMapper CnpjSocioMapper;
+    private CnpjSocioMapper cnpjSocioMapper;
 
-    public CnpjService(CnpjRepository cnpjRepository) {
+    public CnpjService(CnpjRepository cnpjRepository, CnpjSocioMapper cnpjSocioMapper) {
         this.cnpjRepository = cnpjRepository;
+        this.cnpjSocioMapper = cnpjSocioMapper;
     }
 
     // Salvar CNPJ a partir do DTO
@@ -33,23 +34,22 @@ public class CnpjService implements ICnpjService {
         }
 
         // Converte DTO para entidade
-        Cnpj cnpj = CnpjSocioMapper.converterDTOParaEntidade(cnpjDTO);
-
-        // Vincula os sócios
-        vincularSocios(cnpj);
+        Cnpj cnpj = cnpjSocioMapper.converterDTOParaEntidade(cnpjDTO);
+        
+        vincularSociosCnpjExistente(cnpj);
 
         // Salva no banco
         Cnpj salvo = cnpjRepository.save(cnpj);
 
         // Converte de volta para DTO e retorna
-        return CnpjSocioMapper.converterEntidadeParaDTO(salvo);
+        return cnpjSocioMapper.converterEntidadeParaDTO(salvo);
     }
 
     // Listar todos
     @Override
     public List<CnpjDTO> listarTodos() {
         return cnpjRepository.findAll().stream()
-                .map(CnpjSocioMapper::converterEntidadeParaDTO)
+                .map(cnpjSocioMapper::converterEntidadeParaDTO)
                 .collect(Collectors.toList());
     }
 
@@ -58,7 +58,7 @@ public class CnpjService implements ICnpjService {
     public CnpjDTO buscarPorId(Long id) {
         Cnpj cnpj = cnpjRepository.findById(id)
                 .orElseThrow(() -> new CnpjNotFoundException(id));
-        return CnpjSocioMapper.converterEntidadeParaDTO(cnpj);
+        return cnpjSocioMapper.converterEntidadeParaDTO(cnpj);
     }
 
     // Atualizar
@@ -75,14 +75,14 @@ public class CnpjService implements ICnpjService {
         // Atualiza sócios
         cnpjExistente.setSocios(
             cnpjDTO.getSocios().stream()
-                    .map(CnpjSocioMapper::converterDTOParaSocio)
+                    .map(cnpjSocioMapper::converterDTOParaSocio)
                     .collect(Collectors.toList())
         );
-
-        vincularSocios(cnpjExistente);
-
+        
+        vincularSociosCnpjExistente(cnpjExistente);
+        
         Cnpj atualizado = cnpjRepository.save(cnpjExistente);
-        return CnpjSocioMapper.converterEntidadeParaDTO(atualizado);
+        return cnpjSocioMapper.converterEntidadeParaDTO(atualizado);
     }
 
     // Deletar
@@ -94,11 +94,10 @@ public class CnpjService implements ICnpjService {
     }
     
     // Vincula cada sócio ao CNPJ
-    private void vincularSocios(Cnpj cnpj) {
+    private void vincularSociosCnpjExistente(Cnpj cnpj) {
         if (cnpj.getSocios() != null) {
             for (Socio socio : cnpj.getSocios()) {
                 // Se o sócio é pessoa física, ou juridica
-                socio.setCnpj(cnpj);
                 if(cnpjRepository.findByCnpj(socio.getDocumento()) != null) socio.setCnpjSocio(cnpj);
                 else socio.setCnpjSocio(null);
             }

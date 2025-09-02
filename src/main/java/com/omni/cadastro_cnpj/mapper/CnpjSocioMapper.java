@@ -3,11 +3,15 @@ package com.omni.cadastro_cnpj.mapper;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.stereotype.Component;
+
 import com.omni.cadastro_cnpj.dto.CnpjDTO;
 import com.omni.cadastro_cnpj.dto.SocioDTO;
 import com.omni.cadastro_cnpj.entity.Cnpj;
 import com.omni.cadastro_cnpj.entity.Socio;
 
+
+@Component
 public class CnpjSocioMapper {
 
     public Cnpj converterDTOParaEntidade(CnpjDTO dto) {
@@ -39,6 +43,7 @@ public class CnpjSocioMapper {
     // Converte entidade para DTO
     public CnpjDTO converterEntidadeParaDTO(Cnpj cnpj) {
         CnpjDTO dto = new CnpjDTO();
+        dto.setId(cnpj.getId());
         dto.setCnpj(cnpj.getCnpj());
         dto.setRazaoSocial(cnpj.getRazaoSocial());
         dto.setNomeFantasia(cnpj.getNomeFantasia());

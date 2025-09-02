@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.omni.cadastro_cnpj.validation.DocumentoValido;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +15,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CnpjDTO {
 
+	private Long id;
+	
     @NotBlank(message = "O campo cnpj é obrigatório")
     @DocumentoValido(tipo = DocumentoValido.TipoDocumento.CNPJ, message = "CNPJ inválido")
     private String cnpj;
@@ -24,5 +27,6 @@ public class CnpjDTO {
     @NotBlank(message = "O campo nomeFantasia é obrigatório")
     private String nomeFantasia;
     
+    @Valid
     private List<SocioDTO> socios;
 }
