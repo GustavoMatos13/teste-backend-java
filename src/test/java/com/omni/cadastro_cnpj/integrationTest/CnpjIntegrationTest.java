@@ -26,25 +26,27 @@ public class CnpjIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private String gerarJsonCnpj(String cnpj, String razao, String fantasia, boolean incluirSocios) {
-        String sociosJson = incluirSocios ? """
-            ,"socios":[
-                {"tipo":"PF","documento":"12345678909","nome":"João","porcentagemParticipacao":50.0},
-                {"tipo":"PJ","documento":"45723174000110","nome":"Empresa ABC","porcentagemParticipacao":50.0}
-            ]""" : "";
-        return String.format("""
-            {
-              "cnpj":"%s",
-              "razaoSocial":"%s",
-              "nomeFantasia":"%s"%s
-            }
-            """, cnpj, razao, fantasia, sociosJson);
-    }
+    private String gerarJsonCnpj(String cnpj, String razao, String fantasia) {
+        String sociosJson = """
+                ,"socios":[
+                    {"tipo":"PF","documento":"12345678909","nome":"João","porcentagemParticipacao":50.0},
+                    {"tipo":"PJ","documento":"45723174000110","nome":"Empresa ABC","porcentagemParticipacao":50.0}
+                ]
+                """;
+
+            return String.format("""
+                {
+                  "cnpj":"%s",
+                  "razaoSocial":"%s",
+                  "nomeFantasia":"%s"%s
+                }
+                """, cnpj, razao, fantasia, sociosJson);
+        }
 
     // 1️ POST - criar CNPJ válido com sócios
     @Test
     void deveCriarCnpjComSocios() throws Exception {
-        String json = gerarJsonCnpj("45723174000110", "Empresa LTDA", "Fantasia", true);
+        String json = gerarJsonCnpj("45723174000110", "Empresa LTDA", "Fantasia");
 
         mockMvc.perform(post("/omni/criar_cnpj")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +59,7 @@ public class CnpjIntegrationTest {
     // 2️ POST - criar CNPJ inválido
     @Test
     void deveFalharCriarCnpjInvalido() throws Exception {
-        String json = gerarJsonCnpj("11111111111111","Empresa LTDA","Fantasia", true);
+        String json = gerarJsonCnpj("11111111111111","Empresa LTDA","Fantasia");
 
         mockMvc.perform(post("/omni/criar_cnpj")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +110,7 @@ public class CnpjIntegrationTest {
     // 5️ GET por ID existente
     @Test
     void deveBuscarCnpjPorIdExistente() throws Exception {
-        String json = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", true);
+        String json = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia");
         String response = mockMvc.perform(post("/omni/criar_cnpj")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
@@ -134,7 +136,7 @@ public class CnpjIntegrationTest {
     // 7 PUT - atualizar ID inexistente
     @Test
     void deveRetornar404AoAtualizarIdInexistente() throws Exception {
-        String jsonAtualizar = gerarJsonCnpj("45723174000110","Empresa Atualizada","Fantasia Atualizada", true);
+        String jsonAtualizar = gerarJsonCnpj("45723174000110","Empresa Atualizada","Fantasia Atualizada");
         mockMvc.perform(put("/omni/atualizar/9999")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonAtualizar))
@@ -144,7 +146,7 @@ public class CnpjIntegrationTest {
     // 8 PUT - atualizar existente
     @Test
     void deveAtualizarCnpjExistente() throws Exception {
-        String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", true);
+        String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia");
         String response = mockMvc.perform(post("/omni/criar_cnpj")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonCriar))
@@ -154,7 +156,7 @@ public class CnpjIntegrationTest {
         ObjectMapper mapper = new ObjectMapper();
         Long id = mapper.readTree(response).get("id").asLong();
 
-        String jsonAtualizar = gerarJsonCnpj("45723174000110","Empresa Atualizada","Fantasia Atualizada", true);
+        String jsonAtualizar = gerarJsonCnpj("45723174000110","Empresa Atualizada","Fantasia Atualizada");
 
         mockMvc.perform(put("/omni/atualizar/" + id)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -167,7 +169,7 @@ public class CnpjIntegrationTest {
     // 9️ DELETE - remover existente
     @Test
     void deveDeletarCnpjExistente() throws Exception {
-        String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia", true);
+        String jsonCriar = gerarJsonCnpj("45723174000110","Empresa LTDA","Fantasia");
         String response = mockMvc.perform(post("/omni/criar_cnpj")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonCriar))
