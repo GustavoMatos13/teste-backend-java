@@ -79,13 +79,15 @@ public class CnpjService implements ICnpjService {
         cnpjExistente.setRazaoSocial(cnpjDTO.getRazaoSocial());
         cnpjExistente.setNomeFantasia(cnpjDTO.getNomeFantasia());
 
-        // Atualiza sócios
-        cnpjExistente.setSocios(
-            cnpjDTO.getSocios().stream()
-                    .map(cnpjSocioMapper::converterDTOParaSocio)
-                    .collect(Collectors.toList())
-        );
-        
+        // Atualiza sócios    
+        if (cnpjDTO.getSocios() != null && cnpjExistente.getSocios() != null) {
+        	cnpjExistente.getSocios().clear();
+            cnpjDTO.getSocios().forEach(socioDTO -> {
+                Socio socio = cnpjSocioMapper.converterDTOParaSocio(socioDTO);
+                socio.setCnpj(cnpjExistente);
+                cnpjExistente.getSocios().add(socio);
+            });
+        }
         vincularSociosCnpjExistente(cnpjExistente);
         
         Cnpj atualizado = cnpjRepository.save(cnpjExistente);

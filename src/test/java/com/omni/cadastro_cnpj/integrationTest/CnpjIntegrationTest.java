@@ -87,7 +87,7 @@ public class CnpjIntegrationTest {
                .andExpect(status().isBadRequest());
     }
     
-    // 4 POST - criar com sócio inválido
+    // 4 POST - criar com sócio inválido tipo de documento
     @Test
     void deveFalharCriarCnpjComSocioTipoInvalido() throws Exception {
         String json = """
